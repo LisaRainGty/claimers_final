@@ -1,0 +1,357 @@
+{
+  "mode": "rooms",
+  "aggregate": {
+    "CLAIMARC": {
+      "n_folds": 1,
+      "folds": [
+        "rooms"
+      ],
+      "acc": {
+        "mean": 85.2,
+        "std": 0.0
+      },
+      "prec": {
+        "mean": 77.0,
+        "std": 0.0
+      },
+      "rec": {
+        "mean": 74.2,
+        "std": 0.0
+      },
+      "f1pos": {
+        "mean": 75.6,
+        "std": 0.0
+      },
+      "macro_f1": {
+        "mean": 82.5,
+        "std": 0.0
+      },
+      "auprc": {
+        "mean": 80.2,
+        "std": 0.0
+      },
+      "auroc": {
+        "mean": 93.0,
+        "std": 0.0
+      },
+      "total_test": 880,
+      "total_pos": 271
+    },
+    "CLAIMARC (forward-only)": {
+      "n_folds": 1,
+      "folds": [
+        "rooms"
+      ],
+      "acc": {
+        "mean": 85.3,
+        "std": 0.0
+      },
+      "prec": {
+        "mean": 74.8,
+        "std": 0.0
+      },
+      "rec": {
+        "mean": 79.0,
+        "std": 0.0
+      },
+      "f1pos": {
+        "mean": 76.8,
+        "std": 0.0
+      },
+      "macro_f1": {
+        "mean": 83.1,
+        "std": 0.0
+      },
+      "auprc": {
+        "mean": 80.0,
+        "std": 0.0
+      },
+      "auroc": {
+        "mean": 93.0,
+        "std": 0.0
+      },
+      "total_test": 880,
+      "total_pos": 271
+    },
+    "BERT-CLS": {
+      "n_folds": 1,
+      "folds": [
+        "rooms"
+      ],
+      "acc": {
+        "mean": 86.0,
+        "std": 0.0
+      },
+      "prec": {
+        "mean": 72.2,
+        "std": 0.0
+      },
+      "rec": {
+        "mean": 88.9,
+        "std": 0.0
+      },
+      "f1pos": {
+        "mean": 79.7,
+        "std": 0.0
+      },
+      "macro_f1": {
+        "mean": 84.5,
+        "std": 0.0
+      },
+      "auprc": {
+        "mean": 77.6,
+        "std": 0.0
+      },
+      "auroc": {
+        "mean": 92.0,
+        "std": 0.0
+      },
+      "total_test": 880,
+      "total_pos": 271
+    },
+    "RoBERTa-CLS": {
+      "n_folds": 1,
+      "folds": [
+        "rooms"
+      ],
+      "acc": {
+        "mean": 84.2,
+        "std": 0.0
+      },
+      "prec": {
+        "mean": 73.1,
+        "std": 0.0
+      },
+      "rec": {
+        "mean": 77.1,
+        "std": 0.0
+      },
+      "f1pos": {
+        "mean": 75.0,
+        "std": 0.0
+      },
+      "macro_f1": {
+        "mean": 81.7,
+        "std": 0.0
+      },
+      "auprc": {
+        "mean": 75.9,
+        "std": 0.0
+      },
+      "auroc": {
+        "mean": 91.0,
+        "std": 0.0
+      },
+      "total_test": 880,
+      "total_pos": 271
+    },
+    "ESIM": {
+      "n_folds": 1,
+      "folds": [
+        "rooms"
+      ],
+      "acc": {
+        "mean": 82.6,
+        "std": 0.0
+      },
+      "prec": {
+        "mean": 65.5,
+        "std": 0.0
+      },
+      "rec": {
+        "mean": 91.9,
+        "std": 0.0
+      },
+      "f1pos": {
+        "mean": 76.5,
+        "std": 0.0
+      },
+      "macro_f1": {
+        "mean": 81.4,
+        "std": 0.0
+      },
+      "auprc": {
+        "mean": 70.3,
+        "std": 0.0
+      },
+      "auroc": {
+        "mean": 88.3,
+        "std": 0.0
+      },
+      "total_test": 880,
+      "total_pos": 271
+    },
+    "LLM zero-shot (Qwen-Flash)": {
+      "n_folds": 1,
+      "folds": [
+        "rooms"
+      ],
+      "acc": {
+        "mean": 49.0,
+        "std": 0.0
+      },
+      "prec": {
+        "mean": 26.9,
+        "std": 0.0
+      },
+      "rec": {
+        "mean": 38.4,
+        "std": 0.0
+      },
+      "f1pos": {
+        "mean": 31.7,
+        "std": 0.0
+      },
+      "macro_f1": {
+        "mean": 45.5,
+        "std": 0.0
+      },
+      "auprc": {
+        "mean": 29.3,
+        "std": 0.0
+      },
+      "auroc": {
+        "mean": 47.0,
+        "std": 0.0
+      },
+      "total_test": 880,
+      "total_pos": 271
+    },
+    "LLM few-shot (Qwen-Flash)": {
+      "n_folds": 1,
+      "folds": [
+        "rooms"
+      ],
+      "acc": {
+        "mean": 48.8,
+        "std": 0.0
+      },
+      "prec": {
+        "mean": 32.8,
+        "std": 0.0
+      },
+      "rec": {
+        "mean": 63.5,
+        "std": 0.0
+      },
+      "f1pos": {
+        "mean": 43.3,
+        "std": 0.0
+      },
+      "macro_f1": {
+        "mean": 48.3,
+        "std": 0.0
+      },
+      "auprc": {
+        "mean": 32.4,
+        "std": 0.0
+      },
+      "auroc": {
+        "mean": 52.1,
+        "std": 0.0
+      },
+      "total_test": 880,
+      "total_pos": 271
+    }
+  },
+  "per_fold": {
+    "CLAIMARC": {
+      "rooms": {
+        "thr": 0.64,
+        "acc": 85.22727272727273,
+        "prec": 77.01149425287356,
+        "rec": 74.16974169741697,
+        "f1pos": 75.56390977443608,
+        "macro_f1": 82.48879527809751,
+        "auprc": 80.20591187084305,
+        "auroc": 92.9604517720054,
+        "n": 880,
+        "pos": 271
+      }
+    },
+    "CLAIMARC (forward-only)": {
+      "rooms": {
+        "thr": 0.54,
+        "acc": 85.3409090909091,
+        "prec": 74.82517482517483,
+        "rec": 78.96678966789668,
+        "f1pos": 76.84021543985637,
+        "macro_f1": 83.05851170995312,
+        "auprc": 79.96315642939696,
+        "auroc": 92.97408491326293,
+        "n": 880,
+        "pos": 271
+      }
+    },
+    "BERT-CLS": {
+      "rooms": {
+        "thr": 0.62,
+        "acc": 86.02272727272727,
+        "prec": 72.15568862275448,
+        "rec": 88.92988929889299,
+        "f1pos": 79.6694214876033,
+        "macro_f1": 84.51003541912631,
+        "auprc": 77.59516387479715,
+        "auroc": 91.95099340155963,
+        "n": 880,
+        "pos": 271
+      }
+    },
+    "RoBERTa-CLS": {
+      "rooms": {
+        "thr": 0.32,
+        "acc": 84.20454545454545,
+        "prec": 73.07692307692307,
+        "rec": 77.12177121771218,
+        "f1pos": 75.04488330341113,
+        "macro_f1": 81.74521804405802,
+        "auprc": 75.87328829882041,
+        "auroc": 91.00152085264696,
+        "n": 880,
+        "pos": 271
+      }
+    },
+    "ESIM": {
+      "rooms": {
+        "thr": 0.6,
+        "acc": 82.61363636363637,
+        "prec": 65.52631578947368,
+        "rec": 91.88191881918819,
+        "f1pos": 76.49769585253458,
+        "macro_f1": 81.35074152410317,
+        "auprc": 70.32450282057916,
+        "auroc": 88.27610443592121,
+        "n": 880,
+        "pos": 271
+      }
+    },
+    "LLM zero-shot (Qwen-Flash)": {
+      "rooms": {
+        "thr": 0.9400000000000001,
+        "acc": 48.97727272727273,
+        "prec": 26.94300518134715,
+        "rec": 38.37638376383764,
+        "f1pos": 31.65905631659057,
+        "macro_f1": 45.47594701595621,
+        "auprc": 29.282308197057482,
+        "auroc": 46.95253849090215,
+        "n": 880,
+        "pos": 271
+      }
+    },
+    "LLM few-shot (Qwen-Flash)": {
+      "rooms": {
+        "thr": 0.76,
+        "acc": 48.75,
+        "prec": 32.82442748091603,
+        "rec": 63.46863468634686,
+        "f1pos": 43.27044025157233,
+        "macro_f1": 48.26734447811777,
+        "auprc": 32.44891549963731,
+        "auroc": 52.073146347227016,
+        "n": 880,
+        "pos": 271
+      }
+    }
+  }
+}

@@ -1,0 +1,211 @@
+{
+  "thr": 0.06,
+  "confusion": {
+    "tp": 210,
+    "fp": 120,
+    "fn": 39,
+    "tn": 486
+  },
+  "n_test": 855,
+  "err_by_category": {
+    "sports_and_outdoor": {
+      "err_rate": 0.141,
+      "n": 220
+    },
+    "apparel_and_underwear": {
+      "err_rate": 0.168,
+      "n": 196
+    },
+    "general": {
+      "err_rate": 0.193,
+      "n": 176
+    },
+    "food_and_beverages": {
+      "err_rate": 0.264,
+      "n": 106
+    },
+    "smart_home": {
+      "err_rate": 0.224,
+      "n": 67
+    },
+    "jewelry_and_collectibles": {
+      "err_rate": 0.098,
+      "n": 41
+    },
+    "baby_kids_and_pets": {
+      "err_rate": 0.222,
+      "n": 36
+    },
+    "shoes_and_bags": {
+      "err_rate": 0.462,
+      "n": 13
+    }
+  },
+  "err_by_coverage": {
+    "cov=1": {
+      "err_rate": 0.241,
+      "n": 319
+    },
+    "cov=0": {
+      "err_rate": 0.155,
+      "n": 264
+    },
+    "cov=2": {
+      "err_rate": 0.164,
+      "n": 214
+    },
+    "cov=3": {
+      "err_rate": 0.103,
+      "n": 58
+    }
+  },
+  "err_by_reliability": {
+    "c0.3-0.6": {
+      "err_rate": 0.153,
+      "n": 391
+    },
+    "c>=0.6": {
+      "err_rate": 0.305,
+      "n": 321
+    },
+    "c<0.3": {
+      "err_rate": 0.007,
+      "n": 143
+    }
+  },
+  "claimarc_vs_bert": {
+    "claimarc_wrong": 159,
+    "bert_wrong": 158,
+    "claimarc_fix_bert": 44,
+    "bert_fix_claimarc": 45,
+    "both_wrong": 114
+  },
+  "cases": {
+    "false_positive_highconf": [
+      {
+        "pair_id": "p3663574409718972261__HOME_起沫效果",
+        "category": "smart_home",
+        "attribute": "起沫效果",
+        "y": 0,
+        "p": 1.0,
+        "c": 0.65,
+        "claim": "喷上去之后就跟镀了膜似的",
+        "evidence": "[参数] 泡沫型"
+      },
+      {
+        "pair_id": "p3663574409718972261__HOME_物理形态",
+        "category": "smart_home",
+        "attribute": "物理形态",
+        "y": 0,
+        "p": 1.0,
+        "c": 0.35,
+        "claim": "喷上去之后就跟镀了膜似的",
+        "evidence": "[参数] 泡沫型"
+      },
+      {
+        "pair_id": "p3490652681037608601__FOOD_生产日期",
+        "category": "food_and_beverages",
+        "attribute": "生产日期",
+        "y": 0,
+        "p": 1.0,
+        "c": 0.65,
+        "claim": "保质期十个月的,想你放到明年七八月份,都是可以的。",
+        "evidence": "[OCR] 生产日期：见封口处"
+      },
+      {
+        "pair_id": "p3663574409718972261__HOME_视频效果",
+        "category": "smart_home",
+        "attribute": "视频效果",
+        "y": 0,
+        "p": 1.0,
+        "c": 0.65,
+        "claim": "喷上去之后就跟镀了膜似的 特别清楚",
+        "evidence": ""
+      }
+    ],
+    "false_negative_highconf": [
+      {
+        "pair_id": "p3772909092989960636__APPAREL_是否加绒",
+        "category": "apparel_and_underwear",
+        "attribute": "是否加绒",
+        "y": 1,
+        "p": 0.0,
+        "c": 0.66,
+        "claim": "加绒的",
+        "evidence": "[参数] 水洗 [视觉] 第2图特写显示面料表面有细密竖条绒毛纹理 [视觉] 第3图拉链旁面料可见明显绒面结构 [视觉] 第4图用户评论配图中深色裤身呈现典型灯芯绒/植绒质感"
+      },
+      {
+        "pair_id": "p3691242379324555611__SPORT_手感",
+        "category": "sports_and_outdoor",
+        "attribute": "手感",
+        "y": 1,
+        "p": 0.0,
+        "c": 0.48,
+        "claim": "这裤子质感真的很顶",
+        "evidence": ""
+      },
+      {
+        "pair_id": "p3768382098625396975__SPORT_风格",
+        "category": "sports_and_outdoor",
+        "attribute": "风格",
+        "y": 1,
+        "p": 0.0,
+        "c": 0.66,
+        "claim": "而且这个黑色经典中的经典",
+        "evidence": ""
+      },
+      {
+        "pair_id": "p3741504380109717728__APPAREL_服装版型",
+        "category": "apparel_and_underwear",
+        "attribute": "服装版型",
+        "y": 1,
+        "p": 0.0,
+        "c": 0.68,
+        "claim": "版型好看",
+        "evidence": "[OCR] 套头衫的休闲格 [OCR] 宽松版型 [OCR] 现代版型设计。"
+      }
+    ],
+    "true_positive_confident": [
+      {
+        "pair_id": "p3663574409718972261__HOME_贴胶痕迹",
+        "category": "smart_home",
+        "attribute": "贴胶痕迹",
+        "y": 1,
+        "p": 1.0,
+        "c": 0.66,
+        "claim": "喷上去之后就跟镀了膜似的",
+        "evidence": ""
+      },
+      {
+        "pair_id": "p3802690086907281726__SPORT_是否瑕疵",
+        "category": "sports_and_outdoor",
+        "attribute": "是否瑕疵",
+        "y": 1,
+        "p": 1.0,
+        "c": 0.675,
+        "claim": "连包边条都给你们带了Zemo的logo标,支持固域上验货,保证品支持齐天无理由",
+        "evidence": ""
+      },
+      {
+        "pair_id": "p3728761325975896542__SHOEBAG_误导消费者",
+        "category": "shoes_and_bags",
+        "attribute": "误导消费者",
+        "y": 1,
+        "p": 1.0,
+        "c": 0.68,
+        "claim": "追求纯棉材质的别买它啊, 这个不是纯棉的, 但是它主打就是性价比",
+        "evidence": ""
+      },
+      {
+        "pair_id": "p3750435753914663188__SPORT_是否瑕疵",
+        "category": "sports_and_outdoor",
+        "attribute": "是否瑕疵",
+        "y": 1,
+        "p": 1.0,
+        "c": 0.48,
+        "claim": "可以激起不会变形的,你们放心去入",
+        "evidence": ""
+      }
+    ]
+  }
+}

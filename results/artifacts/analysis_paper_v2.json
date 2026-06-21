@@ -1,0 +1,68 @@
+{
+  "boundary_size": 69,
+  "rows": [
+    {
+      "tag": "full",
+      "overall_macro_f1": 0.7924,
+      "overall_auprc": 0.7406,
+      "boundary_macro_f1": 0.7657,
+      "boundary_auprc": 0.7327,
+      "boundary_wF1": 0.699,
+      "geom_attr_same_label_tight": 0.7157,
+      "geom_attr_opp_label_sep": 0.1331,
+      "geom_cross_attr": 0.3035,
+      "geom_alignment": 0.5686,
+      "geom_uniformity": -0.9607
+    },
+    {
+      "tag": "no_cl",
+      "overall_macro_f1": 0.7757,
+      "overall_auprc": 0.6998,
+      "boundary_macro_f1": 0.7621,
+      "boundary_auprc": 0.7336,
+      "boundary_wF1": 0.7142,
+      "geom_attr_same_label_tight": 0.615,
+      "geom_attr_opp_label_sep": 0.275,
+      "geom_cross_attr": 0.2494,
+      "geom_alignment": 0.77,
+      "geom_uniformity": -1.3819
+    },
+    {
+      "tag": "global_neg",
+      "overall_macro_f1": 0.7835,
+      "overall_auprc": 0.7263,
+      "boundary_macro_f1": 0.7503,
+      "boundary_auprc": 0.7092,
+      "boundary_wF1": 0.6787,
+      "geom_attr_same_label_tight": 0.7044,
+      "geom_attr_opp_label_sep": 0.1522,
+      "geom_cross_attr": 0.2938,
+      "geom_alignment": 0.5911,
+      "geom_uniformity": -0.9706
+    },
+    {
+      "tag": "bert",
+      "overall_macro_f1": 0.7812,
+      "overall_auprc": 0.6993,
+      "boundary_macro_f1": 0.8102,
+      "boundary_auprc": 0.7607,
+      "boundary_wF1": 0.7408
+    },
+    {
+      "tag": "roberta",
+      "overall_macro_f1": 0.7538,
+      "overall_auprc": 0.6524,
+      "boundary_macro_f1": 0.7819,
+      "boundary_auprc": 0.7318,
+      "boundary_wF1": 0.7144
+    },
+    {
+      "tag": "esim",
+      "overall_macro_f1": 0.7359,
+      "overall_auprc": 0.5222,
+      "boundary_macro_f1": 0.7824,
+      "boundary_auprc": 0.679,
+      "boundary_wF1": 0.6928
+    }
+  ]
+}

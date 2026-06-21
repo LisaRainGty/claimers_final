@@ -1,0 +1,49 @@
+# macOS / filesystem noise
+.DS_Store
+._*
+**/._*
+~$*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ipynb_checkpoints/
+
+# Secrets / local env
+.env
+.env.*
+env.sh
+*.key
+*.pem
+id_*
+
+# Raw corpora / supervised dataset (kept locally, not committed; see data/README.md)
+data/*.jsonl
+
+# Model / embedding bundles and checkpoints (regenerable; see embeddings/README.md)
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.npz
+*.npy
+*.pkl
+*.joblib
+
+# LaTeX build artifacts
+*.aux
+*.fls
+*.fdb_latexmk
+*.out
+*.xdv
+*.synctex.gz
+paper/*.log
+
+# Editor / tool state
+.vscode/
+.idea/
+*.swp
+*.swo

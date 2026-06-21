@@ -1,0 +1,22 @@
+{
+  "CLAIMARC": {
+    "ece_raw": 0.1468,
+    "ece_tempscaled": 0.0651,
+    "T": 5.176
+  },
+  "BERT": {
+    "ece_raw": 0.1557,
+    "ece_tempscaled": 0.0696,
+    "T": 3.483
+  },
+  "RoBERTa": {
+    "ece_raw": 0.1466,
+    "ece_tempscaled": 0.1218,
+    "T": 1.927
+  },
+  "ESIM": {
+    "ece_raw": 0.1557,
+    "ece_tempscaled": 0.1429,
+    "T": 2.232
+  }
+}
