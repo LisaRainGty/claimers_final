@@ -1,7 +1,10 @@
 # 数据集说明
 
-本目录存放 CLAIMARC 新架构的最终数据集。出于隐私考虑，`*.jsonl` 文本**不纳入 git**
-（见根目录 `.gitignore`），仅在本地保留。
+本目录根存放论文最终数据集;`raw/ processed/ index/ final/` 为流水线各层(各自带
+README)。出于隐私/体积考虑,所有数据文本**不纳入 git**(见根 `.gitignore`),仅本地保留。
+
+> 从原始数据到本目录最终数据集的完整构建链路见 [`../docs/DATA_PIPELINE.md`](../docs/DATA_PIPELINE.md)。
+> 各层数据用同盘 `mv ../claimarc/data/<layer>/* <layer>/` 迁入。
 
 ## 文件
 

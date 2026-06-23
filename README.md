@@ -22,9 +22,18 @@ claimarc_final/
 ├── env.example.sh            # 环境变量样例（复制为 env.sh；设 PYTHONPATH/可选本地 BGE 路径）
 ├── src/
 │   ├── config.py             # 路径 / 模型 / 网关配置（全部读环境变量，无硬编码密钥）
-│   ├── common/               # LLM 网关、embedding、IO 等公用模块（LLM 基线需要）
-│   └── models/               # 核心代码（见下方“代码地图”）
-├── data/                     # 最终数据集 *.jsonl（本地保留，.gitignore 不入库；见 data/README.md）
+│   ├── common/               # LLM 网关、embedding、IO 等公用模块
+│   ├── run_pipeline.py       # 数据流水线编排器（A0→…→final）
+│   ├── stage_a/ stage_b/ stage_c/   # 评论属性 / 话术对齐 / 商品证据 三阶段
+│   ├── labels/ final/        # §2 标签引擎 + 分组划分 join
+│   ├── data_quality/         # 数据集重建/拼接（records→最终训练集）
+│   └── models/               # 建模与实验核心代码（见下方“代码地图”）
+├── docs/                     # 数据流水线与溯源文档
+│   ├── DATA_PIPELINE.md      # 从原始数据到最终训练集的完整 DAG（必读）
+│   ├── Methodology_Data.md   # §2 标签方法学
+│   └── dataset_provenance/   # 每个数据集变体的输入清单与统计（溯源）
+├── data/                     # 数据（本地保留，.gitignore 不入库；见各层 README）
+│   ├── raw/ processed/ index/ final/   # 原始 / 中间 / 索引 / 数据集变体
 ├── results/                  # 实验结果（入库）
 │   ├── campaign6_results.jsonl   # RQ1 主表 + 主消融（新 canonical 重定基）
 │   ├── campaign7_results.jsonl   # 决策路径 + RACL 细粒度消融
@@ -143,6 +152,40 @@ python -m models.make_figs           # fig_calibration / fig_hparam
 python -m models.make_inject_fig     # fig_inject（跨域库注入）
 python -m models.make_selective_fig  # fig_selective（选择性预测）
 ```
+
+## 数据流水线（从原始数据复现）
+
+完整链路(原始数据 → 三阶段抽取 → 标签引擎 → 重建/拼接 → 最终训练集)、每阶段的
+脚本↔产物映射、以及哪些环节依赖 LLM/VLM,见 **[`docs/DATA_PIPELINE.md`](docs/DATA_PIPELINE.md)**。
+
+```bash
+source env.sh && cd src
+python -m run_pipeline --all        # raw -> 结构化记录 -> 基础数据集（含 LLM/VLM 阶段）
+python -m run_pipeline --pilot      # food_and_beverages 小样冒烟
+# records -> 最终监督数据集
+python -m data_quality.build_stateful_proposal_dataset_v2
+python -m data_quality.build_plan_label_weights_v1
+python -m data_quality.build_objective_negative_dataset_v1
+```
+
+> 原始数据(≈34GB)、processed(≈6.4GB)、final(≈8.5GB)均**本地保留、不入库**;在同一块盘上
+> 用 `mv ../claimarc/data/<layer>/* data/<layer>/` 迁入即可(瞬时、零额外占用)。各层用途见
+> `data/<layer>/README.md`。从零重跑需 LLM/VLM 网关与 GPU;不可逐字节重放的评审环节以
+> `docs/dataset_provenance/` 的输入清单 + 统计作为溯源证据。
+
+### 数据流水线代码（`src/`）
+| 模块 | 作用 |
+| --- | --- |
+| `run_pipeline.py` | 按依赖顺序编排全部阶段（`--all` / `--pilot` / `--stage`） |
+| `stage_a/`（a0–a3） | 评论属性抽取 + 品类内标准化（A1 用 LLM） |
+| `stage_b/`（b0–b4_b5） | 直播话术抽取 + 段落化 + 三元组对齐（B1 用 LLM） |
+| `stage_c/`（c1–c5） | 商品详情图/参数证据：triage/params/OCR/VLM/fact records（C4 用 VLM） |
+| `labels/build_labels.py` | §2 硬标签 `y` 与可靠性权重 `c` |
+| `final/join_split.py` | 合并三阶段 + 直播间分组划分（防泄漏） |
+| `data_quality/build_stateful_proposal_dataset_v2.py` | 重建评审 → 双标签 stateful 数据集 |
+| `data_quality/build_plan_label_weights_v1.py` | FULLPOOL 上的 §2 y/c 标签引擎（纯离线） |
+| `data_quality/build_objective_negative_dataset_v1.py` | 证据驱动客观负例（y=0，PU 折扣） |
+| `data_quality/audit_dataset_quality.py` | 数据集质量自检 |
 
 ## 数据与嵌入说明
 

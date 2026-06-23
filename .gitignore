@@ -23,6 +23,16 @@ id_*
 # Raw corpora / supervised dataset (kept locally, not committed; see data/README.md)
 data/*.jsonl
 
+# Pipeline data layers (large; kept locally, see each layer's README.md)
+data/raw/**
+data/processed/**
+data/index/**
+data/final/**
+!data/raw/README.md
+!data/processed/README.md
+!data/index/README.md
+!data/final/README.md
+
 # Model / embedding bundles and checkpoints (regenerable; see embeddings/README.md)
 *.pt
 *.pth
