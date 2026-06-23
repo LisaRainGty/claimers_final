@@ -516,6 +516,40 @@ def info_nce(g_anchor, g_pos, g_negs, tau=0.07):
     return -(pos - denom)
 
 
+def supcon_loss(g, batch, tau=0.07):
+    """Faithful supervised contrastive loss (Khosla et al., 2020), L_out form.
+
+    In-batch only: for each anchor, positives are all OTHER same-label samples in
+    the batch, negatives are all other-label samples in the batch. No retrieval,
+    no hard mining, no reliability/class weighting — the standard 2020 baseline.
+    """
+    z = F.normalize(g, dim=-1)
+    device = z.device
+    y = batch.y.to(device).view(-1)
+    if hasattr(batch, "contrastive_mask"):
+        elig = batch.contrastive_mask.to(device).view(-1) >= 0.5
+    else:
+        elig = torch.ones(len(y), dtype=torch.bool, device=device)
+    idx = torch.nonzero(elig).flatten()
+    if idx.numel() < 2:
+        return torch.tensor(0.0, device=device)
+    zz = z[idx]; yy = y[idx]
+    m = zz.shape[0]
+    sim = (zz @ zz.T) / tau
+    self_mask = torch.eye(m, dtype=torch.bool, device=device)
+    sim = sim - sim.max(dim=1, keepdim=True).values.detach()
+    exp = torch.exp(sim).masked_fill(self_mask, 0.0)
+    denom = exp.sum(dim=1).clamp_min(1e-12)          # A(i): all except self
+    log_prob = sim - torch.log(denom).view(-1, 1)
+    pos_mask = (yy.view(-1, 1) == yy.view(1, -1)) & (~self_mask)
+    pos_count = pos_mask.sum(dim=1)
+    valid = pos_count > 0
+    if valid.sum() == 0:
+        return torch.tensor(0.0, device=device)
+    mean_log_prob_pos = (log_prob * pos_mask).sum(dim=1)[valid] / pos_count[valid]
+    return -mean_log_prob_pos.mean()
+
+
 def contrastive_loss(g, batch, bank: MemoryBank, cw, Kp=3, Kn=5, tau=0.07, global_neg=False,
                      cl_c_min=0.0, cl_neg_c_min=0.0,
                      cl_teacher_mode="off", cl_teacher_conf_min=0.0,
@@ -1056,8 +1090,9 @@ def train(args, splits=None, return_model=False):
     eval_only = getattr(args, "eval_only", False)
     for epoch in range(0 if not eval_only else args.warmup + args.cl_epochs,
                        args.warmup + args.cl_epochs):
-        cl_on = (epoch >= args.warmup) and (not args.no_cl)
-        bank = build_bank()[0] if cl_on else None
+        cl_mode = getattr(args, "cl_mode", "racl")
+        cl_on = (epoch >= args.warmup) and (not args.no_cl) and (cl_mode != "none")
+        bank = build_bank()[0] if (cl_on and cl_mode == "racl") else None
         model.train()
         tot, ce_tot, cl_tot, td_tot, view_tot, aux_tot, proto_tot = 0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
         opt.zero_grad()
@@ -1131,7 +1166,9 @@ def train(args, splits=None, return_model=False):
                         embed_weight=getattr(args, "view_embed_weight", 0.0),
                     )
             cl_val = torch.tensor(0.0, device=device)
-            if cl_on:
+            if cl_on and cl_mode == "supcon":
+                cl_val = supcon_loss(g.float(), b, tau=args.tau)
+            elif cl_on:
                 cl_val = contrastive_loss(g.float(), b, bank, cl_cw, Kp=args.Kp, Kn=args.Kn,
                                           tau=args.tau, global_neg=args.global_neg,
                                           cl_c_min=args.cl_c_min,
@@ -1237,6 +1274,9 @@ def main():
     ap.add_argument("--gamma_neg", type=float, default=4.0)
     ap.add_argument("--gamma_pos", type=float, default=0.0)
     ap.add_argument("--no_cl", action="store_true")
+    ap.add_argument("--cl_mode", default="racl", choices=["racl", "supcon", "none"],
+                    help="racl=retrieval-augmented contrast (ours); supcon=faithful "
+                         "in-batch supervised contrastive (Khosla et al., 2020); none=no contrast.")
     ap.add_argument("--swa", action="store_true", help="启用 SWA 权重平均（默认关闭；消融用）")
     ap.add_argument("--no_fusion", action="store_true")
     ap.add_argument("--n_fusion", type=int, default=2)

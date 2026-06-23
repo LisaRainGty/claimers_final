@@ -28,7 +28,13 @@ L_E = 384
 
 
 def resolve_bge_path(name: str = "BAAI/bge-large-zh-v1.5") -> str:
-    """优先 ModelScope 本地缓存（embed_worker 已下载），否则 HF 名。"""
+    """优先本地目录 / 环境变量，其次 ModelScope 缓存，否则 HF 名。"""
+    import os
+    if os.path.isdir(name):
+        return name
+    env_path = os.environ.get("CLAIMARC_BGE_PATH", "")
+    if env_path and os.path.isdir(env_path):
+        return env_path
     try:
         from modelscope import snapshot_download
         return snapshot_download(name.replace("BAAI/", "AI-ModelScope/"))

@@ -19,6 +19,7 @@
 \captionsetup{font=small,labelfont=bf}
 \setlength{\parskip}{2pt}
 \newcommand{\best}[1]{\textbf{#1}}
+\newcommand{\std}[1]{{\scriptsize$\pm$#1}}
 
 \title{\vspace{-2em}From Objective Verification to Consumer Perception:\\
 A Retrieval-Augmented Contrastive Framework for Misleading-Advertising\\
@@ -475,50 +476,78 @@ maintenance rather than re-training.}
 \subsection{Representation Geometry and Boundary Sensitivity (RQ2)}
 \label{sec:exp:geom}
 
-If RACL works as intended, it should reshape the retrieval embedding so that
-neighbors in the index share the queried attribute and the perceived-risk label,
-which is exactly what the RKC vote (Section~\ref{sec:exp:xdom}) and the gradient-free
-library adaptation read off. We test this on the test embeddings
-$\mathbf{g}_{p,a}$ with two attribute-conditioned quantities: the mean cosine to
-same-attribute \emph{same-label} neighbors (tightness, higher is better) and the
-attribute-conditioned retrieval quality (mAP@10, the precision of the
-ten nearest neighbors at sharing the query's attribute). Both compare the
-canonical against the same network trained \emph{without} the contrastive
-objective, so the contrast is the only difference. Table~\ref{tab:geom} reports
-them. RACL tightens same-label neighborhoods from 0.628 to 0.764 and lifts the
-attribute-retrieval mAP@10 from 0.296 to 0.325; the contrast organizes the local
-neighborhood so that retrieval returns same-attribute, same-label exemplars, the
-structure the vote depends on. The UMAP projection in Figure~\ref{fig:umap} shows
-the label structure by eye: under the full model the misleading pairs condense
-into a detached region, whereas removing RACL leaves the two classes interleaved.
-This is the geometric counterpart of the AP gain in
-Section~\ref{sec:exp:main} and of why the frozen-encoder vote becomes useful only
-after RACL (Section~\ref{sec:exp:xdom}).
+The value of a contrastive objective should show up in how it reshapes the label
+geometry, making misleading and honest pairs more separable in the retrieval
+space---the structure the RKC vote (Section~\ref{sec:exp:xdom}) and the
+gradient-free library write read off. To separate this effect from prior work we
+run a strictly controlled comparison: an identical BGE-full-fine-tuning backbone,
+classifier head and hyper-parameters, with three variants that differ \emph{only}
+in the contrastive objective---\emph{no contrast} (BCE only), standard supervised
+contrastive learning (\emph{SupCon}; Khosla et al.\ 2020, with in-batch
+same-label positives and other-label negatives, no retrieval or hard mining), and
+our retrieval-augmented contrast (\emph{RACL}; full-pool pseudo-gold positives and
+hard negatives, reliability- and class-weighted). All metrics are measured on the
+test embeddings $\mathbf{g}_{p,a}$ over three seeds and are attribute-free (the
+train split serves as the retrieval index, the test split as queries);
+Table~\ref{tab:geom} reports them.
+
+Three findings emerge. First, \textbf{class separability}: RACL reaches a label
+silhouette of 0.422, above standard SupCon (0.349) and no-contrast (0.196), and
+with the smallest variance ($\pm$0.010 vs.\ SupCon's $\pm$0.173)---the most stable
+separation of the three. The UMAP projection in Figure~\ref{fig:umap} shows this
+by eye: RACL condenses the misleading pairs into a detached cluster, the two
+classes interleave without contrast, and standard SupCon sits in between. Second,
+the \textbf{key difference between RACL and standard SupCon is whether the
+representation collapses}: SupCon attains the tightest same-label alignment
+(0.478) but at the cost of uniformity (only $-0.86$), squeezing same-class points
+together; RACL instead keeps the space spread out (uniformity $-1.21$) while
+separating the classes, landing in the retrieval-friendlier regime of the
+alignment--uniformity plane and avoiding the collapse of the vanilla objective
+(Wang and Isola 2020). Third, the \textbf{hard region}: restricted to the
+confusable subset (queries whose nearest opposite-label neighbor is most similar),
+both contrastive objectives lift neighborhood purity from 0.50 to 0.57---the
+contrastive signal acts precisely on pairs that look alike yet carry opposite
+labels, which is where RACL applies explicit pressure through hard negatives. We
+note that neighborhood purity@10 is comparable across the three ($\approx$0.81):
+full fine-tuning already establishes label-consistent neighborhoods, so the
+distinct contribution of the contrastive objective is class \emph{separation},
+not raw neighbor purity. Taken together, contrastive training yields a more
+separable yet uncollapsed retrieval geometry---the structure that the retrieval
+vote and library-write adaptation depend on, and the reason the frozen-encoder
+vote becomes useful only after the representation is reshaped
+(Section~\ref{sec:exp:xdom}).
 
 \begin{table}[t]
 \centering\small
-\setlength{\tabcolsep}{10pt}
-\begin{tabular}{lcc}
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{lccccc}
 \toprule
-\textbf{Variant} & \textbf{Same-label tight} $\uparrow$ & \textbf{Attr.\ mAP@10} $\uparrow$ \\
+\textbf{Variant} & \textbf{Silh.} $\uparrow$ & \textbf{Hard pur.@10} $\uparrow$ & \textbf{Align.} $\downarrow$ & \textbf{Unif.} & \textbf{Pur.@10} \\
 \midrule
-CLAIMARC w/o RACL        & 0.628 & 0.296 \\
-\textbf{CLAIMARC (full)} & \best{0.764} & \best{0.325} \\
+w/o contrast              & 0.196\std{0.053} & 0.500\std{0.043} & 1.121 & $-2.02$ & 0.811 \\
+SupCon (Khosla et al.\ 2020) & 0.349\std{0.173} & \best{0.573\std{0.017}} & 0.478 & $-0.86$ & 0.804 \\
+\textbf{RACL (ours)}      & \best{0.422\std{0.010}} & \best{0.573\std{0.088}} & 0.905 & $-1.21$ & 0.811 \\
 \bottomrule
 \end{tabular}
-\caption{Attribute-conditioned geometry on the test set (new canonical, single
-seed). The class-balanced retrieval-augmented contrast tightens same-label
-neighborhoods and improves attribute-conditioned retrieval quality (mAP@10)
-relative to the same model trained without the contrastive objective.}
+\caption{Label-conditional geometry of the test retrieval embedding under three
+contrastive objectives that share an identical BGE-full-fine-tuning backbone,
+classifier and hyper-parameters (3-seed mean$\pm$s.d.; attribute-free, with the
+train split as the retrieval index). RACL attains the best and most stable label
+silhouette; standard SupCon reaches the tightest alignment but a collapsed (least
+uniform) space, whereas RACL preserves uniformity while separating the classes.
+Neighborhood purity@10 is already established by full fine-tuning and is
+comparable across objectives.}
 \label{tab:geom}
 \end{table}
 
 \begin{figure}[t]
 \centering
 \includegraphics[width=\columnwidth]{figs/fig_umap_label.pdf}
-\caption{UMAP of the retrieval embedding $\mathbf{g}_{p,a}$ (test), colored by
-perceived-risk label. The full model (left) isolates the misleading pairs into
-a detached cluster; removing RACL (middle) collapses the separation.}
+\caption{UMAP of the test retrieval embedding $\mathbf{g}_{p,a}$, colored by
+perceived-risk label, under the three contrastive objectives (w/o contrast \textbar{}
+SupCon 2020 \textbar{} RACL). RACL isolates the misleading pairs into a detached
+cluster; without contrast the two classes interleave, while standard SupCon lies
+in between.}
 \label{fig:umap}
 \end{figure}
 
@@ -868,10 +897,13 @@ below random (AP 27--29), with five-shot CoT no better; even a LoRA-fine-tuned
 Qwen2.5-7B trails by more than 10 AP at roughly $20\times$ the parameters, and a
 non-parametric probe on frozen embeddings reaches only 64.4 AP---it is the
 contrastive geometry, not the retrieval rule, that carries the result. On RQ2,
-RACL produces the intended geometry, tightening same-attribute same-label
-neighborhoods from 0.628 to 0.764 and lifting attribute-conditioned retrieval
-quality (mAP@10) from 0.296 to 0.325; this is the geometric structure the
-retrieval vote and library adaptation exploit. On RQ3, CLAIMARC transfers best of all learned systems, leading the
+under a controlled comparison against standard supervised contrastive learning
+(SupCon; Khosla et al.\ 2020), RACL produces the best and most stable class
+separation (label silhouette 0.422 vs.\ 0.349 for SupCon and 0.196 without
+contrast) and lifts hard-region neighbor purity from 0.50 to 0.57; unlike standard
+SupCon it separates the classes without collapsing the representation (a balanced
+alignment--uniformity profile), the geometric structure the retrieval vote and
+library write exploit. On RQ3, CLAIMARC transfers best of all learned systems, leading the
 ranking metrics on unseen categories (AUC 90.0, AP 71.0) and on unseen streamers
 (AUC 93.1, AP 81.4, the largest streamer-transfer AP of any system), while the
 LLMs do not transfer at all; freezing the encoder and writing held-out streamer
@@ -906,9 +938,9 @@ contrast, and reliability components each carry part of the signal. At the metho
 folds retrieval-guided contrastive learning into joint claim--evidence
 discrimination, indexing the embedding space, drawing neighbors into the
 contrastive objective, and concentrating the learning pressure on pairs that
-look alike yet carry different labels; the geometry analysis verifies that this
-tightens same-label neighborhoods and improves attribute-conditioned retrieval,
-the structure the retrieval vote relies on. At the
+look alike yet carry different labels; against a standard supervised contrastive
+baseline, the geometry analysis shows that this yields the best and uncollapsed
+class separation, the structure the retrieval vote relies on. At the
 deployment level, the framework admits a parameter-efficient variant that freezes
 the encoder after training and adapts through library writes, converting the
 absorption of new streamers, categories, and risk phrasings from model retraining
@@ -1056,6 +1088,9 @@ Chen W (2022) LoRA: Low-rank adaptation of large language models.
 \textit{Proc.\ ICLR}.
 \bibitem{khosla2020} Khosla P, Teterwak P, Wang C, et al.\ (2020) Supervised
 contrastive learning. \textit{Proc.\ NeurIPS}.
+\bibitem{wang2020} Wang T, Isola P (2020) Understanding contrastive
+representation learning through alignment and uniformity on the hypersphere.
+\textit{Proc.\ ICML}, 9929--9939.
 \bibitem{gao2021} Gao T, Yao X, Chen D (2021) SimCSE: Simple contrastive
 learning of sentence embeddings. \textit{Proc.\ EMNLP}, 6894--6910.
 \bibitem{mei2024} Mei J, Chen J, Lin W, et al.\ (2024) Improving hateful meme
